@@ -1,0 +1,176 @@
+#include<iostream.h>
+#include<conio.h>
+#include<stdio.h>
+#include<fstream.h>
+#include<sting.h>
+
+class employee
+{	private:
+		char empname[25];
+		char empdesig[30];
+		int empcode;
+		float salary;
+		int hra,da,gross;
+		
+		void cal_allowances()
+		{	hra=1.2*salary;
+			da=0.5*salary;
+		}
+		vid cal_gross()
+		{	gross=salary+hra+da;
+		}
+		
+	public:
+		int option;
+		void input()
+		{	cout<<"\t\t EMPLOYEE DETAILS";
+			cout<<"\n Enter the employee code";
+			cin>>empcode;
+			cout<<"\n Enter the employee name:";
+			gets(empname);
+			cout<<"\n Enter the employee designation:";
+			cout<<"\n 1.Programmer\t\t2.CyberSecurity Expert\t\t3.CEO";
+			cout<<"\n 4.COO\t\t5.Data Scientist";
+			cout<<"\n Enter the choice";
+			switch(option)
+			{
+				case 1:
+					{
+						empsalary=32000;
+						strcpy(empdesig,"Programmer");
+						break;
+					}
+				case 2:
+					{
+						empsalary=33000;
+						strcpy(empdesig,"CyberSecurity Expert");
+						break;
+						
+					}
+				case 3:
+					{
+						empsalary=55000;
+						strcpy(empdesig,"CEO");
+						break;
+					}
+				case 4:
+					{
+						empsalary=50000;
+						strcpy(empdesig,"COO");
+						break;
+					}
+				case 5:
+					{
+						empsalary=40000;
+						strcpy(empdesig,"Data Scientist");
+						break;
+					}
+				default:	
+					{
+						cout<<"\n Wrong choice";
+						break;
+					}
+				
+			}
+		}
+		void display()
+		{
+			cout<<"\n Employee code:"<<empcode;
+			cout<<"\n Employee name:"<<empname;
+			cout<<"\n Employee designation:"<<empdesig;
+			cout<<"\n Employee Salary:"<<empsalary;
+			cout<<"\n House Rent Allowance:"<<hra;
+			cout<<"\n Dearness Allowance:"<<da;
+			cout<<"\n Gross Salary;"<<gross;
+		}
+};
+
+int main()
+{
+	char opt;
+  fstream record;
+  employee emp;
+  int choice, rec, pos;
+
+  while (choice != 4)
+  {
+    clrscr();
+    cout << "     MAIN MENU       " << endl;
+    cout << "1. Enter Record " << endl;
+    cout << "2. Modify Record " << endl;
+    cout << "3. View Record " << endl;
+    cout << "4. Exit " << endl;
+    cin >> choice;
+    clrscr();
+    switch (choice) {
+    case 1:
+      {
+        record.open("emp.txt", ios::out | ios::app);
+        if (!record) {
+          cout << "Failed to open file!" << endl;
+        } else {
+          cout << "\n         ENTER RECORDS " << endl;
+          record.seekg(0, ios::end);
+          do {
+            emp.input();
+            record.write((char * ) & emp, sizeof(emp));
+            cout << "\nEnter another record ? {Y/N} "<< endl;
+            cin >> opt;
+          } while (opt == 'y' || opt == 'Y');
+        }
+        record.close();
+        break;
+      }
+    case 2:
+      {
+        record.open("emp.txt", ios::in | ios::out);
+        if (!record) {
+          cout << "Failed to open file!" << endl;
+        } else {
+          cout << "\n           MODIFY RECORDS " << endl;
+          cout << "\nWhich record is to be modified ?" << endl;
+          cin >> rec;
+          pos = sizeof(emp) * (rec-1);
+          record.seekp(pos);
+          cout << "\nModify this record ? {Y/N}"<< endl;
+          record.read((char * ) & emp, sizeof(emp));
+          emp.display();
+          cout<<"\n\n";
+          cin >> opt;
+          if (opt == 'y' || opt == 'Y') {
+            record.seekg(pos, ios::beg);
+            emp.input();
+            record.write((char * ) & emp, sizeof(emp));
+            cout << "\nRecord modified successfully!" << endl;
+          } else {
+            cout << "\nNo records were modified!"<< endl;
+            }
+        }
+        record.close();
+        break;
+      }
+    case 3:
+      {
+        record.open("emp.txt", ios:: in );
+        if (!record) {
+          cout << "Failed to open file!" << endl;
+        } else {
+          cout << "\n         VIEW RECORDS " << endl;
+          while (!record.eof()) {
+            record.read((char * ) & emp, sizeof(emp));
+            if(record.eof()) break;
+            emp.display();
+            cout<<endl;
+          }
+          record.close();
+          cout<<endl;
+        }
+        break;
+      }
+    default:
+        cout << "\nInvalid Option! ";
+        break;
+    }
+  }
+  return (0);
+}
